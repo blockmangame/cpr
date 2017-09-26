@@ -35,6 +35,7 @@ class Session::Impl {
     void SetBody(const Body& body);
     void SetLowSpeed(const LowSpeed& low_speed);
     void SetVerifySsl(const VerifySsl& verify);
+    void SetXferInfo(const XferInfo& xfer_info);
 
     Response Delete();
     Response Get();
@@ -49,6 +50,7 @@ class Session::Impl {
     Url url_;
     Parameters parameters_;
     Proxies proxies_;
+    XferInfo xfer_info_;
 
     Response makeRequest(CURL* curl);
     static void freeHolder(CurlHolder* holder);
@@ -291,6 +293,16 @@ void Session::Impl::SetVerifySsl(const VerifySsl& verify) {
     }
 }
 
+void Session::Impl::SetXferInfo(const XferInfo& xfer_info) {
+    auto curl = curl_->handle;
+    if (curl) {
+        xfer_info_ = xfer_info;
+        curl_easy_setopt(curl, CURLOPT_XFERINFODATA, &xfer_info_);
+        curl_easy_setopt(curl, CURLOPT_XFERINFOFUNCTION, &XferInfo::progress_callback);
+        curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0L);
+    }
+}
+
 Response Session::Impl::Delete() {
     auto curl = curl_->handle;
     if (curl) {
@@ -445,6 +457,7 @@ void Session::SetBody(const Body& body) { pimpl_->SetBody(body); }
 void Session::SetBody(Body&& body) { pimpl_->SetBody(std::move(body)); }
 void Session::SetLowSpeed(const LowSpeed& low_speed) { pimpl_->SetLowSpeed(low_speed); }
 void Session::SetVerifySsl(const VerifySsl& verify) { pimpl_->SetVerifySsl(verify); }
+void Session::SetXferInfo(const XferInfo& xfer_info) { pimpl_->SetXferInfo(xfer_info); }
 void Session::SetOption(const Url& url) { pimpl_->SetUrl(url); }
 void Session::SetOption(const Parameters& parameters) { pimpl_->SetParameters(parameters); }
 void Session::SetOption(Parameters&& parameters) { pimpl_->SetParameters(std::move(parameters)); }
@@ -465,6 +478,7 @@ void Session::SetOption(const Body& body) { pimpl_->SetBody(body); }
 void Session::SetOption(Body&& body) { pimpl_->SetBody(std::move(body)); }
 void Session::SetOption(const LowSpeed& low_speed) { pimpl_->SetLowSpeed(low_speed); }
 void Session::SetOption(const VerifySsl& verify) { pimpl_->SetVerifySsl(verify); }
+void Session::SetOption(const XferInfo& xfer_info) { pimpl_->SetXferInfo(xfer_info); }
 Response Session::Delete() { return pimpl_->Delete(); }
 Response Session::Get() { return pimpl_->Get(); }
 Response Session::Head() { return pimpl_->Head(); }

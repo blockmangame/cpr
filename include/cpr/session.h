@@ -18,6 +18,7 @@
 #include "cpr/timeout.h"
 #include "cpr/low_speed.h"
 #include "cpr/ssl_options.h"
+#include "cpr/xfer_info.h"
 
 namespace cpr {
 
@@ -46,6 +47,7 @@ class Session {
     void SetBody(const Body& body);
     void SetLowSpeed(const LowSpeed& low_speed);
     void SetVerifySsl(const VerifySsl& verify);
+    void SetXferInfo(const XferInfo& xfer_info);
 
     // Used in templated functions
     void SetOption(const Url& url);
@@ -68,6 +70,7 @@ class Session {
     void SetOption(const Body& body);
     void SetOption(const LowSpeed& low_speed);
     void SetOption(const VerifySsl& verify);
+    void SetOption(const XferInfo& xfer_info);
 
     Response Delete();
     Response Get();
