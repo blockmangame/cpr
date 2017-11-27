@@ -36,6 +36,7 @@ class Session::Impl {
     void SetLowSpeed(const LowSpeed& low_speed);
     void SetVerifySsl(const VerifySsl& verify);
     void SetXferInfo(const XferInfo& xfer_info);
+	void SetConnectTimeout(const ConnectTimeout& connect_timeout);
 
     Response Delete();
     Response Get();
@@ -303,6 +304,13 @@ void Session::Impl::SetXferInfo(const XferInfo& xfer_info) {
     }
 }
 
+void Session::Impl::SetConnectTimeout(const ConnectTimeout& connect_timeout) {
+	auto curl = curl_->handle;
+	if (curl) {
+		curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT_MS, connect_timeout.Milliseconds());
+	}
+}
+
 Response Session::Impl::Delete() {
     auto curl = curl_->handle;
     if (curl) {
@@ -458,6 +466,7 @@ void Session::SetBody(Body&& body) { pimpl_->SetBody(std::move(body)); }
 void Session::SetLowSpeed(const LowSpeed& low_speed) { pimpl_->SetLowSpeed(low_speed); }
 void Session::SetVerifySsl(const VerifySsl& verify) { pimpl_->SetVerifySsl(verify); }
 void Session::SetXferInfo(const XferInfo& xfer_info) { pimpl_->SetXferInfo(xfer_info); }
+void Session::SetConnectTimeout(const ConnectTimeout& connect_timeout) { pimpl_->SetConnectTimeout(connect_timeout); }
 void Session::SetOption(const Url& url) { pimpl_->SetUrl(url); }
 void Session::SetOption(const Parameters& parameters) { pimpl_->SetParameters(parameters); }
 void Session::SetOption(Parameters&& parameters) { pimpl_->SetParameters(std::move(parameters)); }
@@ -479,6 +488,7 @@ void Session::SetOption(Body&& body) { pimpl_->SetBody(std::move(body)); }
 void Session::SetOption(const LowSpeed& low_speed) { pimpl_->SetLowSpeed(low_speed); }
 void Session::SetOption(const VerifySsl& verify) { pimpl_->SetVerifySsl(verify); }
 void Session::SetOption(const XferInfo& xfer_info) { pimpl_->SetXferInfo(xfer_info); }
+void Session::SetOption(const ConnectTimeout& connect_timeout) { pimpl_->SetConnectTimeout(connect_timeout); }
 Response Session::Delete() { return pimpl_->Delete(); }
 Response Session::Get() { return pimpl_->Get(); }
 Response Session::Head() { return pimpl_->Head(); }

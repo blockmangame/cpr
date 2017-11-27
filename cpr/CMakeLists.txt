@@ -17,6 +17,7 @@ add_library(${CPR_LIBRARIES}
     util.cpp
     ssl_options.cpp
     xfer_info.cpp
+    connect_timeout.cpp
 
     # Header files (useful in IDEs)
     "${CPR_INCLUDE_DIRS}/cpr/api.h"
@@ -39,7 +40,8 @@ add_library(${CPR_LIBRARIES}
     "${CPR_INCLUDE_DIRS}/cpr/timeout.h"
     "${CPR_INCLUDE_DIRS}/cpr/util.h"
     "${CPR_INCLUDE_DIRS}/cpr/ssl_options.h"
-    "${CPR_INCLUDE_DIRS}/cpr/xfer_info.h")
+    "${CPR_INCLUDE_DIRS}/cpr/xfer_info.h"
+    "${CPR_INCLUDE_DIRS}/cpr/connect_timeout.h")
 
 message(STATUS "Using CURL_LIBRARIES: ${CURL_LIBRARIES}.")
 target_link_libraries(${CPR_LIBRARIES}
