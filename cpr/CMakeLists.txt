@@ -41,7 +41,8 @@ add_library(${CPR_LIBRARIES}
     "${CPR_INCLUDE_DIRS}/cpr/util.h"
     "${CPR_INCLUDE_DIRS}/cpr/ssl_options.h"
     "${CPR_INCLUDE_DIRS}/cpr/xfer_info.h"
-    "${CPR_INCLUDE_DIRS}/cpr/connect_timeout.h")
+    "${CPR_INCLUDE_DIRS}/cpr/connect_timeout.h"
+    "${CPR_INCLUDE_DIRS}/cpr/curl_option.h")
 
 message(STATUS "Using CURL_LIBRARIES: ${CURL_LIBRARIES}.")
 target_link_libraries(${CPR_LIBRARIES}

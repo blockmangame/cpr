@@ -12,7 +12,7 @@ namespace cpr {
 
 		template<typename T>
 		CurlOption(CURLoption option, T value)
-			: apply([=](CURL* handle) { curl_easy_setopt(option, value); }) {}
+			: apply([=](CURL* handle) { curl_easy_setopt(handle, option, value); }) {}
 	};
 }
 

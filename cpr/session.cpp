@@ -77,6 +77,7 @@ Session::Impl::Impl() {
         curl_easy_setopt(curl, CURLOPT_COOKIEFILE, "");
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, cpr::util::writeFunction);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response_string_);
+		curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, cpr::util::writeFunction);
 		curl_easy_setopt(curl, CURLOPT_HEADERDATA, &header_string_);
 #ifdef CPR_CURL_NOSIGNAL
         curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1L);
