@@ -37,6 +37,7 @@ class Session::Impl {
     void SetVerifySsl(const VerifySsl& verify);
     void SetXferInfo(const XferInfo& xfer_info);
 	void SetConnectTimeout(const ConnectTimeout& connect_timeout);
+	void SetCurlOption(const CurlOption& connect_timeout);
 
     Response Delete();
     Response Get();
@@ -51,6 +52,8 @@ class Session::Impl {
     Url url_;
     Parameters parameters_;
     Proxies proxies_;
+	std::string response_string_;
+	std::string header_string_;
     XferInfo xfer_info_;
 
     Response makeRequest(CURL* curl);
@@ -72,6 +75,9 @@ Session::Impl::Impl() {
         curl_easy_setopt(curl, CURLOPT_MAXREDIRS, 50L);
         curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, curl_->error);
         curl_easy_setopt(curl, CURLOPT_COOKIEFILE, "");
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, cpr::util::writeFunction);
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response_string_);
+		curl_easy_setopt(curl, CURLOPT_HEADERDATA, &header_string_);
 #ifdef CPR_CURL_NOSIGNAL
         curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1L);
 #endif
@@ -311,6 +317,13 @@ void Session::Impl::SetConnectTimeout(const ConnectTimeout& connect_timeout) {
 	}
 }
 
+void Session::Impl::SetCurlOption(const CurlOption& curl_option) {
+	auto curl = curl_->handle;
+	if (curl) {
+		curl_option.apply(curl);
+	}
+}
+
 Response Session::Impl::Delete() {
     auto curl = curl_->handle;
     if (curl) {
@@ -404,12 +417,6 @@ Response Session::Impl::makeRequest(CURL* curl) {
 
     curl_->error[0] = '\0';
 
-    std::string response_string;
-    std::string header_string;
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, cpr::util::writeFunction);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response_string);
-    curl_easy_setopt(curl, CURLOPT_HEADERDATA, &header_string);
-
     auto curl_error = curl_easy_perform(curl);
 
     char* raw_url;
@@ -432,9 +439,9 @@ Response Session::Impl::makeRequest(CURL* curl) {
     }
     curl_slist_free_all(raw_cookies);
 
-    auto header = cpr::util::parseHeader(header_string);
+    auto header = cpr::util::parseHeader(header_string_);
     return Response{static_cast<std::int32_t>(response_code),
-                    response_string,
+                    response_string_,
                     header,
                     raw_url,
                     elapsed,
@@ -467,6 +474,7 @@ void Session::SetLowSpeed(const LowSpeed& low_speed) { pimpl_->SetLowSpeed(low_s
 void Session::SetVerifySsl(const VerifySsl& verify) { pimpl_->SetVerifySsl(verify); }
 void Session::SetXferInfo(const XferInfo& xfer_info) { pimpl_->SetXferInfo(xfer_info); }
 void Session::SetConnectTimeout(const ConnectTimeout& connect_timeout) { pimpl_->SetConnectTimeout(connect_timeout); }
+void Session::SetCurlOption(const CurlOption& curl_option) { pimpl_->SetCurlOption(curl_option); }
 void Session::SetOption(const Url& url) { pimpl_->SetUrl(url); }
 void Session::SetOption(const Parameters& parameters) { pimpl_->SetParameters(parameters); }
 void Session::SetOption(Parameters&& parameters) { pimpl_->SetParameters(std::move(parameters)); }
@@ -489,6 +497,7 @@ void Session::SetOption(const LowSpeed& low_speed) { pimpl_->SetLowSpeed(low_spe
 void Session::SetOption(const VerifySsl& verify) { pimpl_->SetVerifySsl(verify); }
 void Session::SetOption(const XferInfo& xfer_info) { pimpl_->SetXferInfo(xfer_info); }
 void Session::SetOption(const ConnectTimeout& connect_timeout) { pimpl_->SetConnectTimeout(connect_timeout); }
+void Session::SetOption(const CurlOption& curl_option) { pimpl_->SetCurlOption(curl_option); }
 Response Session::Delete() { return pimpl_->Delete(); }
 Response Session::Get() { return pimpl_->Get(); }
 Response Session::Head() { return pimpl_->Head(); }
