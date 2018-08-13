@@ -32,6 +32,10 @@ enum class ErrorCode {
 class Error {
   public:
     Error() : code{ErrorCode::OK} {}
+	Error(const Error&) = default;
+	Error(Error&&) = default;
+	Error& operator=(const Error&) = default;
+	Error& operator=(Error&&) noexcept = default;
 
     template <typename TextType>
     Error(const std::int32_t& curl_code, TextType&& p_error_message)

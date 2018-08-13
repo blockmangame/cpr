@@ -13,6 +13,10 @@ class Cookies {
     Cookies() {}
     Cookies(const std::initializer_list<std::pair<const std::string, std::string>>& pairs);
     Cookies(const std::map<std::string, std::string>& map) : map_{map} {}
+	Cookies(const Cookies&) = default;
+	Cookies(Cookies&&) = default;
+	Cookies& operator=(const Cookies&) = default;
+	Cookies& operator=(Cookies&&) noexcept = default;
 
     std::string& operator[](const std::string& key);
     std::string GetEncoded() const;

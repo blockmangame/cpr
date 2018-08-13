@@ -14,6 +14,10 @@ namespace cpr {
 class Response {
   public:
     Response() = default;
+	Response(const Response&) = default;
+	Response(Response&&) = default;
+	Response& operator=(const Response&) = default;
+	Response& operator=(Response&&) noexcept = default;
 
     template <typename TextType, typename HeaderType, typename UrlType, typename CookiesType,
               typename ErrorType>
